@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database.connection import client
-
+from app.routes.auth import router as auth_router
 
 app = FastAPI()
 
@@ -12,6 +12,12 @@ def startup_db_check():
     except Exception as e:
         print(f"Error connecting to MongoDB: {e}")
 
+
+app.include_router(
+    auth_router,
+    prefix="/auth",
+    tags=["Authentication"]
+)
 
 @app.get("/")
 def home():
