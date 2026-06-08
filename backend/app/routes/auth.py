@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException,Depends
 from app.schemas.auth_schema import (
     RegisterRequest,
     LoginRequest
     )
 from app.services.auth_service import (
     register_user, 
-    login_user
+    login_user,
     )
+from app.dependencies.current_user import get_current_user
+
 
 router= APIRouter()
 
@@ -45,4 +47,12 @@ def login(request: LoginRequest):
     return {
         "access_token": access_token,
         "token_type": "bearer"
+    }
+
+@router.get("/me")
+def get_me(current_user=Depends(get_current_user)):
+    return{
+        "id": str(current_user["_id"]),
+        "name": current_user["name"],
+        "email": current_user["email"]
     }

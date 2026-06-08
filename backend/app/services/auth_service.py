@@ -70,3 +70,17 @@ def get_user_by_token(token:str):
         "name": user["name"],
         "email": user["email"]
     }
+
+def get_current_user_data(email:str):
+    user = users_collection.find_one(
+        {"email": email}
+    )
+
+    if not user:
+        return None
+    
+    return {
+        "id": str(user["_id"]),
+        "name": user["name"],
+        "email": user["email"]
+    }   

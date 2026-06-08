@@ -39,7 +39,7 @@ def create_access_token(data:dict)->str:
 
     return encoded_jwt
 
-def decode_access_token(token:str)->str:
+def decode_access_token(token:str):
 
     try:
         payload=jwt.decode(
