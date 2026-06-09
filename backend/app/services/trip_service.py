@@ -31,3 +31,25 @@ def create_trip(trip_data, current_user):
         )
     
     return str(result.inserted_id)
+
+def get_user_trips(current_user):
+
+    trips = trips_collection.find(
+        {
+            "members.user_id": str(current_user["_id"])
+        }
+    )
+
+    trip_list=[]
+
+    for trip in trips:
+        trip_list.append(
+            {
+                "trip_id":str(trip["_id"]),
+                "trip_name":trip["trip_name"],
+                "destination":trip["destination"],
+                "status":trip["status"],
+                }
+        )
+
+        return trip_list
