@@ -12,3 +12,4 @@ client = MongoClient(MONGO_URI)
 db=client["SyncTrip_db"]
 
 users_collection = db["users"]
+trips_collection = db["trips"]
