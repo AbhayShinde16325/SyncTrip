@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 
 from app.schemas.trip_schema import CreateTripRequest
-from app.services.trip_service import (create_trip, get_user_trips,get_trip_by_id)
+from app.services.trip_service import (create_trip, get_user_trips,get_trip_by_id,update_trip)
 from app.dependencies.current_user import get_current_user
-
+from app.schemas.trip_update_schema import UpdateTripRequest
 router = APIRouter()
 
 @router.post("/create")
@@ -44,3 +44,17 @@ def get_trip_details(
     )
 
     return trip
+
+@router.patch("/{trip_id}")
+def update_trip_details(
+    trip_id: str,
+    update_data: UpdateTripRequest,
+    current_user=Depends(get_current_user)
+):
+    updated_trip = update_trip(
+        trip_id,
+        update_data,
+        current_user
+    )
+
+    return updated_trip

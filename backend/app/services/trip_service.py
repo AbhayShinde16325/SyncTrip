@@ -1,4 +1,6 @@
 from datetime import datetime
+
+
 from app.database.connection import trips_collection
 from bson import ObjectId
 from fastapi import HTTPException
@@ -91,4 +93,67 @@ def get_trip_by_id(trip_id:str, current_user):
         "created_at":trip["created_at"],
         "updated_at":trip["updated_at"],
         "status": trip["status"]
+    }
+
+def update_trip(
+        trip_id:str, 
+        update_data, 
+        current_user
+ ):
+    trip = trips_collection.find_one(
+        {
+            "_id": ObjectId(trip_id)
+        }
+    )
+
+    if not trip:
+        raise HTTPException(
+            status_code=404, 
+            detail="Trip not found"
+            )
+    
+    user_id = str(current_user["_id"])
+
+    user_role=None
+
+    for member in trip["members"]:
+        if member["user_id"]==user_id:
+            user_role=member["role"]
+            break
+
+    if user_role not in ["owner", "editor"]:
+        raise HTTPException(
+            status_code=403,
+            detail="Permission denied"
+        )
+    
+    update_fields=update_data.model_dump(
+        exclude_unset=True
+    )
+
+    update_fields["updated_at"]=datetime.utcnow()
+
+    trips_collection.update_one(
+        {
+            "_id": ObjectId(trip_id)
+        },
+        {
+            "$set": update_fields
+        }
+    )
+
+    updated_trip=trips_collection.find_one(
+        {
+            "_id": ObjectId(trip_id)
+        }
+    )
+
+    return {
+        "trip_id":str(updated_trip["_id"]),
+        "trip_name":updated_trip["trip_name"],
+        "destination":updated_trip["destination"],
+        "description":updated_trip["description"],
+        "start_date":updated_trip["start_date"],
+        "end_date":updated_trip["end_date"],
+        "status": updated_trip["status"]    
     }
