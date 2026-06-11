@@ -13,3 +13,4 @@ db=client["SyncTrip_db"]
 
 users_collection = db["users"]
 trips_collection = db["trips"]
+invitations_collection = db["trip_invitations"]

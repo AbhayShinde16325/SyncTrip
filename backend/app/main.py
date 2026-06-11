@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.database.connection import client
 from app.routes.auth import router as auth_router
 from app.routes.trip import router as trip_router
-
+from app. routes.invitation import router as invitation_router
 app = FastAPI()
 
 @app.on_event("startup")
@@ -29,3 +29,9 @@ app.include_router(
     prefix="/trips",
     tags=["Trips"]
 )
+
+app.include_router(
+    invitation_router,
+    tags=["Invitations"]
+)
+
